@@ -53,7 +53,8 @@ class ContentOrchestrator:
         self.llm = ChatGoogleGenerativeAI(
             model="gemini-1.5-flash",
             temperature=0.7,
-            google_api_key=GOOGLE_API_KEY
+            google_api_key=GOOGLE_API_KEY,
+            convert_system_message_to_human=True
         )
         self.content_worker = ContentWorker(self.llm)
         self.optimization_worker = OptimizationWorker(self.llm)
@@ -400,7 +401,7 @@ async def get_content_suggestions(user_id: int, industry: str = "general") -> Li
         ("human", "Generate 5 LinkedIn post topics for {industry} professionals. Return as a JSON array of strings.")
     ])
     
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7, google_api_key=GOOGLE_API_KEY)
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7, google_api_key=GOOGLE_API_KEY, convert_system_message_to_human=True)
     
     messages = suggestions_prompt.format_messages(industry=industry)
     response = await llm.ainvoke(messages)
