@@ -15,7 +15,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain.schema import HumanMessage, SystemMessage
+from langchain.schema import HumanMessage
 
 from config import GOOGLE_API_KEY
 from database import db
@@ -127,7 +127,7 @@ class ContentWorker:
     def __init__(self, llm: ChatGoogleGenerativeAI):
         self.llm = llm
         self.content_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are an expert LinkedIn content creator specializing in {industry}.
+            ("human", """You are an expert LinkedIn content creator specializing in {industry}.
             
 Your task is to create engaging, professional LinkedIn content that:
 - Provides genuine value to the audience
@@ -203,7 +203,7 @@ class OptimizationWorker:
     def __init__(self, llm: ChatGoogleGenerativeAI):
         self.llm = llm
         self.optimization_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a LinkedIn optimization expert. Your job is to enhance content for maximum engagement on LinkedIn.
+            ("human", """You are a LinkedIn optimization expert. Your job is to enhance content for maximum engagement on LinkedIn.
 
 Optimization Guidelines:
 1. **Hook Optimization**: Ensure the first line is compelling
@@ -253,7 +253,7 @@ class AnalyticsWorker:
     def __init__(self, llm: ChatGoogleGenerativeAI):
         self.llm = llm
         self.analytics_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a LinkedIn engagement expert. Analyze content and provide specific tips for maximizing engagement.
+            ("human", """You are a LinkedIn engagement expert. Analyze content and provide specific tips for maximizing engagement.
 
 Provide 3-5 actionable engagement tips based on:
 - Content type and topic
@@ -294,7 +294,7 @@ class RefinementWorker:
     def __init__(self, llm: ChatGoogleGenerativeAI):
         self.llm = llm
         self.refine_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a professional LinkedIn editor. Rewrite the given LinkedIn post according to the user's instructions while keeping it engaging, concise, and optimized for LinkedIn. Preserve the core meaning, but adapt voice and structure as requested. Return JSON with fields: content, hashtags (3-5), suggested_time, linkedin_tips (2-3)."""),
+            ("human", """You are a professional LinkedIn editor. Rewrite the given LinkedIn post according to the user's instructions while keeping it engaging, concise, and optimized for LinkedIn. Preserve the core meaning, but adapt voice and structure as requested. Return JSON with fields: content, hashtags (3-5), suggested_time, linkedin_tips (2-3)."""),
             ("human", """Original Post:\n{original_content}\n\nInstructions:\n{instruction}\n\nConstraints:\n- Industry: {industry}\n- Tone: {tone}\n- Length: {length} (short~150 words, medium~300 words, long~500 words)\n- Keep authenticity; avoid exaggeration.\n- If not specified, infer reasonable hashtags.""")
         ])
 
@@ -397,7 +397,7 @@ async def get_content_suggestions(user_id: int, industry: str = "general") -> Li
     """Get content topic suggestions based on industry"""
     
     suggestions_prompt = ChatPromptTemplate.from_messages([
-        ("system", f"You are a content strategist for {industry} professionals. Provide 5 engaging LinkedIn post topics that would resonate with this audience."),
+        ("human", f"You are a content strategist for {industry} professionals. Provide 5 engaging LinkedIn post topics that would resonate with this audience."),
         ("human", "Generate 5 LinkedIn post topics for {industry} professionals. Return as a JSON array of strings.")
     ])
     
